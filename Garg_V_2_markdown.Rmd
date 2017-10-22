@@ -1,0 +1,174 @@
+---
+title: "Tidyverse_Fucntions"
+author: "Vinisha"
+date: "October 22, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+
+install.packages("nycflights13")
+
+library(nycflights13)
+
+library(tidyverse)
+
+#********************* Ques 1  Ex5.2.4 ***************************
+
+#Ques 1
+
+#Part1
+
+arrdelay <- filter(flights, arr_delay >= 120)
+
+#Part2
+
+dest <- filter(flights, dest == "IAH" | dest == "HOU")
+
+#Part3
+
+View(airlines)
+?flights
+
+Airline <- filter(flights, carrier %in% c("UA" , "AA" , "DL") )
+
+#Part4
+
+summer <- filter(flights, month %in% c(7, 8, 9))
+
+#Part5
+
+arr <- filter(flights, arr_delay > 120, dep_delay == 0)
+
+
+#Part6
+
+
+dep <- filter(flights, arr_delay <= 30, dep_delay >= 60 )
+
+
+#Part7
+
+deptime <- filter(flights, sched_dep_time >= 0000, sched_dep_time <= 0600 )
+
+
+#Ques 2
+
+# between() helps in filtering records within certain ranges
+
+depbet <- filter(flights, between(sched_dep_time, 0000 , 0600))
+sumbet <-filter(flights, between(month, 7, 9))
+
+
+#********************* Ques 2  Ex5.3.1  Ques 4***************************
+
+?flights
+? airlines
+
+head(airports)
+head(airlines)
+
+# Longest flights are Hawaiian Airlines Inc. travelling from John F Kennedy Intl to Honolulu Intl (4983miles)
+
+long_dist <- arrange(flights, desc(distance))
+
+head(long_dist)
+
+# # Shortest flight is ExpressJet Airlines Inc. travelling from Newark Liberty Intl to Philadelphia Intl (80 miles)
+
+short_dist <- arrange(flights, (distance))
+
+head(short_dist)
+
+
+#********************* Ques 3  Section 5.4.1 Questions 2, 3 ***************************
+
+#Ques2
+
+select(flights, month, month, year)
+
+
+# It doesn'r matter if a variable is mentioned multiple times in a select() call, 
+# it display the data for that variable only once
+
+
+#Ques3
+
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+
+head(vars)
+
+select(flights, one_of(vars))
+
+# one_of() allows you to select mutiple variables in a character form. It's easy to pass variables
+
+
+
+#********************* Ques 4  Section 5.5.2 Question 4 ***************************
+
+#Ques4
+
+
+
+fdelay <- select(flights, dep_delay)) %>%
+mutate(delay = min_rank(-(dep_delay))) %>%
+arrange(delay) %>%
+filter(delay <=10 
+
+
+
+
+#********************* Ques 5  Section 5.7.1 Questions 2,3 ***************************
+
+#Ques2
+
+?flights
+
+wtime <-  flights %>% group_by(tailnum) %>%
+    summarise(air_delay = mean(arr_delay, na.rm = TRUE)) %>%
+  filter(rank(desc(air_delay)) <= 1)
+
+
+head(wtime)
+
+
+#Ques3
+
+
+
+earfl <- select(flights, hour, arr_delay) %>%
+  group_by(hour) %>%
+  summarise(avgdel = mean(arr_delay, na.rm = TRUE)) %>%
+  mutate(avgdel) %>%
+  arrange(avgdel)
+  
+
+
+
+#********************* Ques 6  Section 5.6.7 Questions 4 ***************************
+
+can_delay <- 
+  flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  group_by(year, month, day) %>%
+  summarise(propcan = mean(cancelled),
+            mean_depdelay = mean(dep_delay, na.rm = TRUE))
+
+ggplot(can_delay, aes(x = mean_depdelay, propcan)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+
+
+
+
+
+
+```
+
+
